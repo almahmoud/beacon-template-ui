@@ -12,6 +12,7 @@
     "validate-config": "node scripts/validate-config.js",
     "eject": "react-scripts eject"
   },
+  "homepage": "/af",
   "dependencies": {
     "@ega/beacon-cookie-consent": "https://github.com/EGA-archive/beacon-cookie-consent.git",
     "@emotion/react": "^11.14.0",
