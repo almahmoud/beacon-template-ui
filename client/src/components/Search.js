@@ -23,8 +23,8 @@ import {
   singleEntryCustomLabels,
   prioritizeEntries,
   entryTypeDescriptions,
-  GenomicQueryLabel,
-  FilteringTermsLabel,
+  FilteringTermsInfoTooltip,
+  SearchBarsInfoTooltip,
 } from "../components/common/textFormatting";
 
 export default function Search({
@@ -97,9 +97,12 @@ export default function Search({
     const fetchEntryTypes = async () => {
       try {
         await handleBeaconsInfo();
-
-        const res = await fetch(`${config.apiUrl}/map`, { headers: authHeaders });
+        const res = await fetch(`${config.apiUrl}/map`, {
+          headers: authHeaders,
+        });
         const data = await res.json();
+        // const data = mockMapResonse;
+
         const endpointSets = data.response.endpointSets || {};
         const seen = new Set();
 
@@ -152,7 +155,9 @@ export default function Search({
 
   const fetchConfiguration = async () => {
     try {
-      const res = await fetch(`${config.apiUrl}/configuration`, { headers: authHeaders });
+      const res = await fetch(`${config.apiUrl}/configuration`, {
+        headers: authHeaders,
+      });
       const data = await res.json();
       setEntryTypesConfig({
         entryTypes: data.response?.entryTypes || data.entryTypes || {},
@@ -215,6 +220,8 @@ export default function Search({
     entryTypes.length === 1 ||
     entryTypes[0]?.pathSegment === "g_variants" ||
     selectedPathSegment === "g_variants";
+
+  const isFirstEntryGenomic = entryTypes[0]?.pathSegment === "g_variants";
 
   const primaryColor = config.ui.colors.primary;
   const primaryDarkColor = config.ui.colors.darkPrimary;
@@ -286,6 +293,7 @@ export default function Search({
                   component="ul"
                   data-testid="entrytypes-tooltip-content"
                   sx={{
+                    listStyleType: "disc",
                     pl: { xs: "5px", lg: "20px" },
                     fontFamily: '"Open Sans", sans-serif',
                   }}
@@ -304,6 +312,7 @@ export default function Search({
               componentsProps={{
                 tooltip: {
                   sx: {
+                    py: 1,
                     backgroundColor: "#fff",
                     color: "#000",
                     border: "1px solid black",
@@ -393,27 +402,41 @@ export default function Search({
             ))}
           </Box>
         ) : null}
+        {/* Here */}
         <Box sx={{ display: "flex", alignItems: "center", mb: 2, mt: 4 }}>
           {isSingleNonGenomic ? (
-            <Typography
-              variant="body1"
-              sx={{ fontFamily: '"Open Sans", sans-serif', fontSize: "14px" }}
-            >
-              Add the {FilteringTermsLabel} you need for your search.
-            </Typography>
+            <>
+              <Typography
+                variant="body1"
+                sx={{ fontFamily: '"Open Sans", sans-serif', fontSize: "14px" }}
+              >
+                Add the <b>Filtering Terms</b> you need for your search.
+              </Typography>
+
+              {FilteringTermsInfoTooltip}
+            </>
           ) : (
-            <Typography
-              variant="body1"
-              sx={{ fontFamily: '"Open Sans", sans-serif', fontSize: "14px" }}
-            >
-              {isSingleEntryType ? "" : "2. "}
-              Use the following search bars to narrow down your search using{" "}
-              {isGenomicFirstOrOnly
-                ? GenomicQueryLabel
-                : FilteringTermsLabel}{" "}
-              and/or{" "}
-              {isGenomicFirstOrOnly ? FilteringTermsLabel : GenomicQueryLabel}.
-            </Typography>
+            <>
+              <Typography
+                variant="body1"
+                sx={{
+                  fontFamily: '"Open Sans", sans-serif',
+                  fontSize: "14px",
+                }}
+              >
+                {isSingleEntryType ? "" : "2. "}
+                Use the following search bars to narrow down your search using{" "}
+                <b>
+                  {isFirstEntryGenomic ? "Genomic Query" : "Filtering Terms"}
+                </b>{" "}
+                and/or{" "}
+                <b>
+                  {isFirstEntryGenomic ? "Filtering Terms" : "Genomic Query"}
+                </b>
+                .
+              </Typography>
+              {SearchBarsInfoTooltip}
+            </>
           )}
         </Box>
 
@@ -429,8 +452,8 @@ export default function Search({
               activeInput={activeInput}
               setActiveInput={setActiveInput}
             />
-          ) : isGenomicFirstOrOnly ? (
-            hasGenomic && (
+          ) : hasGenomic ? (
+            isFirstEntryGenomic ? (
               <>
                 <SearchGenomicInput
                   activeInput={activeInput}
@@ -445,32 +468,34 @@ export default function Search({
                   message={message}
                   setMessage={setMessage}
                 />
+
                 <SearchFiltersInput
                   activeInput={activeInput}
                   setActiveInput={setActiveInput}
                 />
               </>
+            ) : (
+              <>
+                <SearchFiltersInput
+                  activeInput={activeInput}
+                  setActiveInput={setActiveInput}
+                />
+
+                <SearchGenomicInput
+                  activeInput={activeInput}
+                  setActiveInput={setActiveInput}
+                  genomicDraft={genomicDraft}
+                  setGenomicDraft={setGenomicDraft}
+                  selectedFilter={selectedFilter}
+                  setSelectedFilter={setSelectedFilter}
+                  assembly={assembly}
+                  setAssembly={setAssembly}
+                  primaryDarkColor={primaryDarkColor}
+                  message={message}
+                  setMessage={setMessage}
+                />
+              </>
             )
-          ) : hasGenomic ? (
-            <>
-              <SearchFiltersInput
-                activeInput={activeInput}
-                setActiveInput={setActiveInput}
-              />
-              <SearchGenomicInput
-                message={message}
-                activeInput={activeInput}
-                setActiveInput={setActiveInput}
-                genomicDraft={genomicDraft}
-                setGenomicDraft={setGenomicDraft}
-                selectedFilter={selectedFilter}
-                setSelectedFilter={setSelectedFilter}
-                assembly={assembly}
-                setAssembly={setAssembly}
-                primaryDarkColor={primaryDarkColor}
-                setMessage={setMessage}
-              />
-            </>
           ) : (
             <SearchFiltersInput
               activeInput={activeInput}

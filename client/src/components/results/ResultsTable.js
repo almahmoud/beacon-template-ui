@@ -29,13 +29,13 @@ import { useSelectedEntry } from "../context/SelectedEntryContext";
 import { useState, useEffect } from "react";
 import ResultsTableRow from "./ResultsTableRow";
 import { loadNetworkMembersWithMaturity } from "./utils/networkMembers";
-import useAuthHeaders from "../../hooks/useAuthHeaders";
 import CohortsTable from "./CohortsTable";
 import DatasetsTable from "./DatasetsTable";
 import {
   getBeaconAggregationInfo,
   getDatasetResponse,
 } from "./utils/beaconType";
+import useAuthHeaders from "../../hooks/useAuthHeaders";
 
 const ResultsTableModal = lazy(() => import("./modal/ResultsTableModal"));
 
@@ -139,13 +139,13 @@ export default function ResultsTable() {
 
   useEffect(() => {
     async function loadMembers() {
-      const membersWithMaturity = await loadNetworkMembersWithMaturity(authHeaders);
+      const membersWithMaturity = await loadNetworkMembersWithMaturity();
       setNetworkMembers(membersWithMaturity);
     }
     if (config.beaconType === "networkBeacon") {
       loadMembers();
     }
-  }, [authHeaders]);
+  }, []);
 
   const getBeaconStatusLabel = (status) => {
     if (!status) return "Undefined";
