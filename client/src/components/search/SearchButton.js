@@ -187,7 +187,7 @@ export default function SearchButton({ setSelectedTool }) {
           color: config.ui.colors.primary,
         },
         "&.Mui-disabled": {
-          backgroundColor: "#d3d3d3w",
+          backgroundColor: "#d3d3d3",
           color: "#888",
           border: "1px solid #ccc",
           opacity: 1,

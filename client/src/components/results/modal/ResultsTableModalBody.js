@@ -16,7 +16,6 @@ import {
   TableHead,
   TableRow,
   tableCellClasses,
-  Tooltip,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import config from "../../../config/config.json";
@@ -24,7 +23,6 @@ import ResultsTableModalRow from "./ResultsTableModalRow";
 import { queryBuilder } from "../../search/utils/queryBuilder";
 import ResultsTableToolbar from "./ResultsTableToolbar";
 import { exportCSV } from "../utils/exportCSV";
-import useAuthHeaders from "../../../hooks/useAuthHeaders";
 import {
   cleanAndParseInfo,
   summarizeValue,
@@ -36,6 +34,7 @@ import InfoCell from "../modal/cellRenderers/InfoCell";
 import MolecularAttributesCell from "../modal/cellRenderers/MolecularAttributesCell";
 import VariationCell from "../modal/cellRenderers/VariationCell";
 import CaseLevelDataCell from "../modal/cellRenderers/CaseLevelDataCell";
+import useAuthHeaders from "../../../hooks/useAuthHeaders";
 
 /**
  * Displays paginated results inside the modal.
