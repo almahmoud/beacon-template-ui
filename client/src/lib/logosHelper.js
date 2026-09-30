@@ -8,5 +8,12 @@ export function logosHelper(path) {
   }
 
   // Otherwise assume it's a public local asset
+  if (
+    typeof path === "string" &&
+    path.startsWith("/") &&
+    !path.startsWith("//")
+  ) {
+    return `${process.env.PUBLIC_URL}${path}`;
+  }
   return path;
 }

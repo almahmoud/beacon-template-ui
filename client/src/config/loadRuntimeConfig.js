@@ -4,9 +4,12 @@ import { validateRuntimeConfig } from "./validateRuntimeConfig";
  * Loads and validates the application configuration at runtime.
  */
 export async function loadRuntimeConfig() {
-  const response = await fetch("/config/config.json", {
-    cache: "no-store",
-  });
+  const response = await fetch(
+    `${process.env.PUBLIC_URL}/config/config.json`,
+    {
+      cache: "no-store",
+    }
+  );
 
   if (!response.ok) {
     throw new Error(

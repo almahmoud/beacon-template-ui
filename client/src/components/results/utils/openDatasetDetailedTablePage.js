@@ -128,7 +128,7 @@ export const openDatasetDetailedTablePage = ({
   window.addEventListener("message", handleDetailsPageReady);
 
   detailsWindow = window.open(
-    `/dataset-detailed-table?${params.toString()}`,
+    `${process.env.PUBLIC_URL}/dataset-detailed-table?${params.toString()}`,
     "_blank"
   );
 

@@ -67,5 +67,8 @@ export const openAlleleFrequencyPage = ({
     params.set("contactEmail", contactEmail);
   }
 
-  window.open(`/allele-frequency?${params.toString()}`, "_blank");
+  window.open(
+    `${process.env.PUBLIC_URL}/allele-frequency?${params.toString()}`,
+    "_blank"
+  );
 };
