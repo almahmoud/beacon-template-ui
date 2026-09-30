@@ -5,6 +5,7 @@ import { useSelectedEntry } from "../context/SelectedEntryContext";
 import { COMMON_MESSAGES } from "../common/CommonMessage";
 import { PATH_SEGMENT_TO_ENTRY_ID } from "../../components/common/textFormatting";
 import { queryBuilder } from "./utils/queryBuilder";
+import useGenomicSearch from "./genomic/useGenomicSearch";
 import { mockSingleBeaconResponse } from "./mockSingleBeaconResponse";
 import useAuthHeaders from "../../hooks/useAuthHeaders";
 
@@ -21,7 +22,13 @@ const buildHeaders = (results = []) => {
 // This button triggers a search when clicked. It builds a query from selected filters and/or genomic queries,
 // sends a request to the Beacon API, handles grouping of results, and updates global state accordingly.
 // If no filters are applied and they are required, it shows an error message instead.
-export default function SearchButton({ setSelectedTool }) {
+export default function SearchButton({
+  setSelectedTool,
+  setActiveInput,
+  assembly,
+  setAssembly,
+  setGenomicMessage,
+}) {
   // Access shared state and updater functions from context
   const {
     selectedPathSegment,
@@ -29,6 +36,9 @@ export default function SearchButton({ setSelectedTool }) {
     setResultData,
     setHasSearchResult,
     selectedFilter,
+    setSelectedFilter,
+    genomicDraft,
+    setGenomicDraft,
     entryTypesConfig,
     setMessage,
     setHasSearchBeenTriggered,
@@ -44,6 +54,16 @@ export default function SearchButton({ setSelectedTool }) {
   // Get authentication headers (includes Bearer token if user is logged in)
   const authHeaders = useAuthHeaders();
 
+  const { commitGenomicDraft } = useGenomicSearch({
+    assembly,
+    setAssembly,
+    genomicDraft,
+    setGenomicDraft,
+    selectedFilter,
+    setSelectedFilter,
+    setMessage: setGenomicMessage,
+  });
+
   // Main logic executed when the user clicks "Search"
   const handleSearch = async () => {
     setIsFilteringTermsOpen(false);
@@ -52,8 +72,22 @@ export default function SearchButton({ setSelectedTool }) {
     const nonFilteredAllowed =
       configForEntry?.nonFilteredQueriesAllowed ?? true;
 
+    // Text left in the genomic input is committed as if Enter had been pressed
+    let filters = selectedFilter;
+
+    if (genomicDraft.trim()) {
+      const genomicFilter = commitGenomicDraft();
+
+      if (!genomicFilter) {
+        setActiveInput("genomic");
+        return;
+      }
+
+      filters = [...selectedFilter, genomicFilter];
+    }
+
     // Block the search if filters are required but none are provided
-    if (!nonFilteredAllowed && selectedFilter.length === 0) {
+    if (!nonFilteredAllowed && filters.length === 0) {
       setMessage(COMMON_MESSAGES.addFilter);
       setResultData([]);
       setHasSearchResult(true);
@@ -66,13 +100,13 @@ export default function SearchButton({ setSelectedTool }) {
     setLoadingData(true);
     setResultData([]);
     setHasSearchBeenTriggered(true);
-    setLastSearchedFilters(selectedFilter);
+    setLastSearchedFilters(filters);
     setLastSearchedPathSegment(selectedPathSegment);
     setQueryDirty(false);
 
     try {
       const url = `${config.apiUrl}/${selectedPathSegment}`;
-      const query = queryBuilder(selectedFilter, entryTypeId);
+      const query = queryBuilder(filters, entryTypeId);
       const requestOptions = {
         method: "POST",
         headers: authHeaders,

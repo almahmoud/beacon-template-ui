@@ -108,6 +108,8 @@ export default function useGenomicSearch({
 
     setSelectedFilter((prev) => [...prev, newGenomicFilter]);
     setGenomicDraft("");
+
+    return newGenomicFilter;
   };
 
   const commitStringQuery = (queryType) => {

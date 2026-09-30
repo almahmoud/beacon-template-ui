@@ -709,6 +709,10 @@ export default function Search({
           <Box>
             <SearchButton
               setSelectedTool={setSelectedTool}
+              setActiveInput={setActiveInput}
+              assembly={assembly}
+              setAssembly={setAssembly}
+              setGenomicMessage={setMessage}
               entryTypesConfig={entryTypesConfig}
               selectedPathSegment={selectedPathSegment}
               selectedFilter={selectedFilter}
