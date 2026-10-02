@@ -541,7 +541,7 @@ const schema = Joi.object({
     /**
      * External navigation links.
      * The feature is disabled by default.
-     * When enabled, between 1 and 2 external links must be provided.
+     * When enabled, between 1 and 3 external links must be provided.
      * When disabled, the links may remain configured but are not displayed.
      */
     showExternalNavBarLink: Joi.boolean().default(false),
@@ -558,13 +558,13 @@ const schema = Joi.object({
             })
           )
           .min(1)
-          .max(2)
+          .max(3)
           .required()
           .messages({
             "array.min":
               "At least one external navigation link must be provided when showExternalNavBarLink is true",
             "array.max":
-              "A maximum of 2 external navigation links is supported",
+              "A maximum of 3 external navigation links is supported",
           }),
 
         otherwise: Joi.array()
@@ -574,11 +574,11 @@ const schema = Joi.object({
               url: httpUrl.required(),
             })
           )
-          .max(2)
+          .max(3)
           .optional()
           .messages({
             "array.max":
-              "A maximum of 2 external navigation links is supported",
+              "A maximum of 3 external navigation links is supported",
           }),
       }
     ),
